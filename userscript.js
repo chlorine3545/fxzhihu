@@ -29,7 +29,7 @@ function createFxZhihuButton(link) {
     `;
     button.addEventListener('click', (e) => {
         e.preventDefault();
-        navigator.clipboard.writeText(link.replace('.zhihu.com', '.fxzhihu.com'));
+        navigator.clipboard.writeText(link.replace('.zhihu.com', '.zhihu.354527.xyz'));
         button.textContent = '已复制';
         setTimeout(() => {
             button.textContent = '复制预览链接';
