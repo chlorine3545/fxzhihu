@@ -1,0 +1,7 @@
+[[edge_functions]]
+  path = "/*"  # 所有请求都将被此函数处理，你可以根据需要修改路径
+  function = "index" # 你的函数名称，对应 index.ts 文件
+
+[build]
+  command = "pnpm build"
+  publish = "dist" # 构建后的输出目录，如果不需要构建，可以省略此行。
