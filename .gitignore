@@ -176,3 +176,5 @@ dist
 
 .direnv
 flake.lock
+
+.DS_Store
