@@ -1,5 +1,5 @@
 import { Question } from "./question";
-import { fixImagesAndLinks, createTemplate, extractReference, FetchError } from "./lib";
+import { fixImagesAndLinks, createTemplate, extractReference, fetchWithCache } from "./lib";
 
 export type Answer = {
   content: string;
@@ -51,6 +51,7 @@ const template = createTemplate`
         .author {
             display: flex;
             gap: 1em;
+            align-items: center;
         }
         #avatar {
             width: 100px;
@@ -60,7 +61,7 @@ const template = createTemplate`
             flex: 1;
         }
         a[data-draft-type="link-card"] {
-           display: block;
+            display: block;
         }
     </style>
 </head>
@@ -70,10 +71,10 @@ const template = createTemplate`
         <div class="author">
             <img class="avatar" id="avatar" src="${"avatar_url"}" />
             <div>
-                <h2 rel="author">
+                <h3 rel="author">
                     <a href="${"author_url"}" target="_blank">@${"author"}</a>
-                </h2>
-                <p> ${"headline"} </p>
+                </h3>
+                <div>${"headline"}</div>
             </div>
         </div>
         <time datetime="${"created_time"}">发表于 ${"created_time_formatted"}</time>
@@ -98,10 +99,7 @@ const questionTemplate = createTemplate`
 
 export async function answer(id: string, redirect: boolean, env: Env): Promise<string> {
   const url = `https://api.zhihu.com/v4/answers/${id}?include=content%2Cexcerpt%2Cauthor%2Cvoteup_count%2Ccomment_count%2Cquestion%2Ccreated_time%2Cquestion.detail`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new FetchError(response.statusText, response);
-  }
+  const response = await fetchWithCache(url);
   const data = await response.json<Answer>();
   const createdTime = new Date(data.created_time * 1000);
 

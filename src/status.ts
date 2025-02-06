@@ -1,4 +1,4 @@
-import { fixImagesAndLinks, createTemplate, extractReference, FetchError } from './lib';
+import { fixImagesAndLinks, createTemplate, extractReference, fetchWithCache } from './lib';
 
 const ZHIHU_HOST = 'https://www.zhihu.com';
 
@@ -115,6 +115,7 @@ const template = createTemplate`
     .author {
       display: flex;
       gap: 1em;
+      align-items: center;
     }
     #avatar {
       width: 100px;
@@ -134,10 +135,10 @@ const template = createTemplate`
     <div class="author">
       <img class="avatar" id="avatar" src="${'avatar_url'}" />
       <div>
-        <h2 rel="author">
+        <h3 rel="author">
           <a href="${'author_url'}" target="_blank">@${'author'}</a>
-        </h2>
-        <p> ${'headline'} </p>
+        </h3>
+        <div>${'headline'}</div>
       </div>
     </div>
     <time datetime="${'created_time'}">发表于 ${'created_time_formatted'}</time>
@@ -184,10 +185,7 @@ const videoContentTemplate = createTemplate`
 
 export async function status(id: string, redirect: boolean, env: Env): Promise<string> {
   const url = new URL(id, `https://www.zhihu.com/api/v4/pins/`);
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new FetchError(response.statusText, response);
-  }
+  const response = await fetchWithCache(url);
   const data = await response.json<Status>();
   const createdTime = new Date(data.created * 1000);
   const updatedTime = new Date(data.updated * 1000);
